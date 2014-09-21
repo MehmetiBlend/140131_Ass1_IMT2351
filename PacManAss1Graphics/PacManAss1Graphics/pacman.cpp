@@ -112,7 +112,7 @@ void handleKeys(SDL_Event* event, int *dir, int *vel){
 			*vel = WALK_SPEED;
 			break;
 		}
-		//more needed in here, and you might want to have x and y separate, and make a player object etc.
+		
 	}
 	else {
 		if (event->type == SDL_KEYUP){
