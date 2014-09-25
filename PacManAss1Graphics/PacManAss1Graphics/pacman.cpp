@@ -4,10 +4,10 @@
 #include<iostream>
 #include <string>
 
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
-const int WALK_SPEED = 10;
-const int GHOST_SPEED = 12;
+const int SCREEN_WIDTH = 800;
+const int SCREEN_HEIGHT = 600;
+const int WALK_SPEED = 12;
+const int GHOST_SPEED =13;
 
 bool init();
 bool loadMedia();
@@ -21,6 +21,7 @@ SDL_Surface* gHelloWorld = NULL;
 SDL_Surface* pacman = NULL;
 SDL_Surface* ghost = NULL;
 SDL_Surface*  ghost2 = NULL;
+SDL_Surface*  ghost3 = NULL;
 SDL_Surface*  b = NULL;
 SDL_Surface*  l = NULL;
 SDL_Surface*  e = NULL;
@@ -112,7 +113,6 @@ void handleKeys(SDL_Event* event, int *dir, int *vel){
 			*vel = WALK_SPEED;
 			break;
 		}
-		
 	}
 	else {
 		if (event->type == SDL_KEYUP){
@@ -121,6 +121,7 @@ void handleKeys(SDL_Event* event, int *dir, int *vel){
 	}
 }
 
+// how to checkCollision
 //http://lazyfoo.net/SDL_tutorials/lesson17/index.php
 
 bool checkCollision(SDL_Rect a, SDL_Rect b)
@@ -172,6 +173,7 @@ void dest(SDL_Rect rec)
 int main(int argc, char* args[])
 {
 	std::string pacmanFilename = "pacman.png";
+	std::string ghostFilename = "monster.png";
 	std::string blendiFilename = "Arial.bmp";
 
 	int spacemanMovement = 0;
@@ -193,7 +195,8 @@ int main(int argc, char* args[])
 
 			loadMedia(pacmanFilename, &pacman);
 			loadMedia(pacmanFilename, &ghost);
-			loadMedia(pacmanFilename, &ghost2);
+			loadMedia(ghostFilename, &ghost2);
+			loadMedia(ghostFilename, &ghost3);
 			loadMedia(blendiFilename, &b);
 			loadMedia(blendiFilename, &l);
 			loadMedia(blendiFilename, &e);
@@ -213,8 +216,8 @@ int main(int argc, char* args[])
 
 
 		SDL_Event event;
-		SDL_Rect sourceRect, gsourceRect, g2sourceRect, sB, sL, sE, sN, sD, sI, sourceColon, sourcePoint, sourceDec;
-		SDL_Rect destRect, gdestRect, g2destRect, dB, dL, dE, dN, dD, dI, destColon, destPoint, destDec;
+		SDL_Rect sourceRect, gsourceRect, g2sourceRect, g3sourceRect, sB, sL, sE, sN, sD, sI, sourceColon, sourcePoint, sourceDec;
+		SDL_Rect destRect, gdestRect, g2destRect , g3destRect, dB, dL, dE, dN, dD, dI, destColon, destPoint, destDec;
 
 		int quit = 0;
 		int rnd = 1;
@@ -246,13 +249,24 @@ int main(int argc, char* args[])
 		//ghost 2 position
 		g2destRect.x = 150;
 		g2destRect.y = 200;
-		g2destRect.h = 70;
-		g2destRect.w = 70;
+		g2destRect.h = 63;
+		g2destRect.w = 65;
 
-		g2sourceRect.x = 300;
-		g2sourceRect.y = 100;
-		g2sourceRect.h = 70;
-		g2sourceRect.w = 70;
+		g2sourceRect.x = 187;
+		g2sourceRect.y = 0;
+		g2sourceRect.h = 63;
+		g2sourceRect.w = 65;
+
+		//ghost 3 position
+		g3destRect.x = 550;
+		g3destRect.y = 300;
+		g3destRect.h = 63;
+		g3destRect.w = 64;
+
+		g3sourceRect.x = 0;
+		g3sourceRect.y = 0;
+		g3sourceRect.h = 63;
+		g3sourceRect.w = 64;
 
 		//Position for "Blendi:d s n" text from Arial.bmp where "d s" are points
 		dB.x = 0;
@@ -351,7 +365,8 @@ int main(int argc, char* args[])
 			// this should only be done when moving.
 			sourceRect.x += 70;//move pacman
 			gsourceRect.x += 70;//move ghost 1
-			g2sourceRect.x += 70;//move ghost 2
+			g2sourceRect.x += 61;//move ghost 2
+			g3sourceRect.x += 61;//move ghost 3
 
 			//if it is the last icon back to first
 			if (sourceRect.x >= 240)
@@ -362,9 +377,13 @@ int main(int argc, char* args[])
 			{
 				gsourceRect.x = 300;
 			}
-			if (g2sourceRect.x >= 430)
+			if (g2sourceRect.x >= 310)
 			{
-				g2sourceRect.x = 300;
+				g2sourceRect.x = 186;
+			}
+			if (g3sourceRect.x >= 126)
+			{
+				g3sourceRect.x = 0;
 			}
 
 
@@ -372,13 +391,13 @@ int main(int argc, char* args[])
 			{
 				switch (spacemanMovement){
 				case 7://go right(d)
-					if (destRect.x <= 560)//to prevent pacman to go out from right side of screen
+					if (destRect.x <= 720)//to prevent pacman to go out from right side of screen
 					{
 						sourceRect.y = 220;
 						destRect.x += spacemanVelocity;
 					}
 					else
-						destRect.x = 560;
+						destRect.x = 720;
 					break;
 				case 8://go up(w)
 					sourceRect.y = 80;
@@ -386,13 +405,13 @@ int main(int argc, char* args[])
 
 					break;
 				case 6://go down(s)
-					if (destRect.y <= 410)//to prevent pacman to go out from bottom side of screen
+					if (destRect.y <= 540)//to prevent pacman to go out from bottom side of screen
 					{
 						sourceRect.y = 10;
 						destRect.y += spacemanVelocity;
 					}
 					else
-						destRect.y = 410;
+						destRect.y = 540;
 					break;
 				case 9://go left(a)
 					sourceRect.y = 150;
@@ -404,12 +423,12 @@ int main(int argc, char* args[])
 			switch (rnd)//move first ghost depending from random number
 			{
 			case 1://go down 
-				if (gdestRect.y <= 410)//to prevent ghost to go out from right side of screen
+				if (gdestRect.y <= 540)//to prevent ghost to go out from right side of screen
 				{
 					gsourceRect.y = 10;
 					gdestRect.y += GHOST_SPEED;
 				}
-				else gdestRect.y = 410;
+				else gdestRect.y = 540;
 				break;
 			case 2://go up
 				gsourceRect.y = 80;
@@ -418,12 +437,12 @@ int main(int argc, char* args[])
 				gsourceRect.y = 150;
 				gdestRect.x -= GHOST_SPEED; break;
 			case 4://go right
-				if (gdestRect.x <= 560)//to prevent ghost to go out from bottom side of screen
+				if (gdestRect.x <= 720)//to prevent ghost to go out from bottom side of screen
 				{
 					gsourceRect.y = 220;
 					gdestRect.x += GHOST_SPEED;
 				}
-				else  gdestRect.x = 560;
+				else  gdestRect.x = 720;
 				break;
 
 			}
@@ -432,28 +451,54 @@ int main(int argc, char* args[])
 			switch (rnd)
 			{
 			case 1://go up
-				g2sourceRect.y = 80;
+				g2sourceRect.y = 189;
 				g2destRect.y -= GHOST_SPEED; break;
 			case 2://go down
-				if (g2destRect.x <= 560)//to prevent pacman to go out from bottom side of screen
+				if (g2destRect.x <= 720)//to prevent pacman to go out from bottom side of screen
 				{
-					g2sourceRect.y = 220;
+					g2sourceRect.y = 125;
 					g2destRect.x += GHOST_SPEED;
 				}
-				else  g2destRect.x = 560;
+				else  g2destRect.x = 720;
 				break;
 			case 3://go right
-				if (g2destRect.y <= 410)//to prevent pacman to go out from bottom side of screen
+				if (g2destRect.y <= 540)//to prevent pacman to go out from bottom side of screen
 				{
-					g2sourceRect.y = 10;
+					g2sourceRect.y = 0;
 					g2destRect.y += GHOST_SPEED;
 				}
-				else g2destRect.y = 410;
+				else g2destRect.y = 540;
 				break;
 			case 4://go left
-				g2sourceRect.y = 150;
+				g2sourceRect.y = 63;
 				g2destRect.x -= GHOST_SPEED; break;
 
+			}
+			//ghost 3
+			switch (rnd)
+			{
+			case 1://go up
+				g3sourceRect.y = 189;
+				g3destRect.y -= GHOST_SPEED; break;
+			case 2://go left
+				g3sourceRect.y = 63;
+				g3destRect.x -= GHOST_SPEED; break;
+			case 3://go right
+				g3sourceRect.y = 0;
+				if (g3destRect.y <= 540)//to prevent pacman to go out from bottom side of screen
+				{					
+					g3destRect.y += GHOST_SPEED;
+				}
+				else g3destRect.y = 540;
+				break;			
+			case 4://go down
+				g3sourceRect.y = 125;
+				if (g3destRect.x <= 720)//to prevent pacman to go out from bottom side of screen
+				{					
+					g3destRect.x += GHOST_SPEED;
+				}
+				else  g3destRect.x = 720;
+				break;
 			}
 
 			//check Collosion between pacman and first ghost
@@ -504,10 +549,35 @@ int main(int argc, char* args[])
 				g2destRect.y = rand() % 400;;
 			}
 
+			//check Collosion between pacman and third ghost
+			if (checkCollision(destRect, g3destRect))
+			{
+				countPoints++;//count collisions
+				sourcePoint.x += 21;//get numbers from Arial.bmp
+				switch (countPoints)
+				{
+				case 5: sourcePoint.x = 0;
+					sourcePoint.y = 25; break;
+				case 10: sourcePoint.x = 315;
+					sourcePoint.y = 0;
+					countPoints = 0;
+					sourceDec.x += 21;
+					if (sourceDec.x == 420)
+					{
+						sourceDec.x = 315;
+					}
+					break;
+				}
+				//spawn ghost 1 into a new random location on screen
+				g3destRect.x = rand() % 400;
+				g3destRect.y = rand() % 400;;
+
+			}
 	
 			SDL_BlitSurface(pacman, &sourceRect, gScreenSurface, &destRect);
 			SDL_BlitSurface(ghost, &gsourceRect, gScreenSurface, &gdestRect);
 			SDL_BlitSurface(ghost2, &g2sourceRect, gScreenSurface, &g2destRect);
+			SDL_BlitSurface(ghost3, &g3sourceRect, gScreenSurface, &g3destRect);
 			SDL_BlitSurface(b, &sB, gScreenSurface, &dB);
 			SDL_BlitSurface(l, &sL, gScreenSurface, &dL);
 			SDL_BlitSurface(e, &sE, gScreenSurface, &dE);

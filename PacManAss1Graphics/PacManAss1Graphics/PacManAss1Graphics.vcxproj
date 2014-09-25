@@ -39,8 +39,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\vs_dev_lib\SDL2\include;C:\vs_dev_lib\SDL2_image-devel-2.0.0-VC\SDL2_image-2.0.0\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\vs_dev_lib\SDL2_image-devel-2.0.0-VC\SDL2_image-2.0.0\lib\x86;C:\vs_dev_lib\SDL2\lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\vs_dev_lib\SDL2\include;D:\vs_dev_lib\SDL2_image-devel-2.0.0-VC\SDL2_image-2.0.0\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\vs_dev_lib\SDL2_image-devel-2.0.0-VC\SDL2_image-2.0.0\lib\x86;D:\vs_dev_lib\SDL2\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
